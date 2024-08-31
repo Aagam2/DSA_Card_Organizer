@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSA Card Organizer</title>
+    <title>DSA Organizer</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="app">
-        <h1>DSA Card Organizer</h1>
-        <button id="addCardBtn">Add Card</button>
-        <div id="cardsContainer"></div>
-    </div>
+    <h1>DSA Organizer</h1>
+    <form id="add-card-form">
+        <input type="text" id="card-name" placeholder="Card Name" required>
+        <button type="submit">Add Card</button>
+    </form>
+    <div id="cards-container"></div>
     <script src="app.js"></script>
 </body>
 </html>

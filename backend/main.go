@@ -6,11 +6,13 @@ import (
 )
 
 func main() {
-    http.HandleFunc("/", homeHandler)
+    // Serve static files from the "frontend" directory
+    fs := http.FileServer(http.Dir("/home/aagam-linux/Desktop/Projects/DSA_Organizer/frontend"))
+    http.Handle("/", fs)
+
+    // Initialize the routes
+    setupRoutes()
+
     log.Println("Server started at http://localhost:8080")
     log.Fatal(http.ListenAndServe(":8080", nil))
-}
-
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-    w.Write([]byte("Welcome to the DSA Card Organizer API"))
 }
