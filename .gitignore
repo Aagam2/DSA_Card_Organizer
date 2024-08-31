@@ -1,4 +1,4 @@
 #.gitignore
 
 # Environents
-/home/aagam-linux/Desktop/Projects/DSA_Organizer/backend/.env
+**/.env
