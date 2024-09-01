@@ -1,10 +1,17 @@
 package main
 
-import "net/http"
+import (
+	"github.com/gorilla/mux"
+)
 
-func setupRoutes() {
-    http.HandleFunc("/api/cards", getCardsHandler)
-    http.HandleFunc("/api/cards/add", addCardHandler)
-    http.HandleFunc("/api/subtopics", getSubtopicsHandler)
-    http.HandleFunc("/api/subtopics/add", addSubtopicHandler)
+func setupRoutes() *mux.Router {
+	r := mux.NewRouter()
+	r.HandleFunc("/api/cards", getCardsHandler).Methods("GET")
+	r.HandleFunc("/api/cards/add", addCardHandler).Methods("POST")
+	r.HandleFunc("/api/subtopics", getSubtopicsHandler).Methods("GET")
+	r.HandleFunc("/api/subtopics/add", addSubtopicHandler).Methods("POST")
+	r.HandleFunc("/api/algorithms", getAlgorithmsHandler).Methods("GET")
+	r.HandleFunc("/api/algorithms/add", uploadAlgorithmHandler).Methods("POST")
+	r.HandleFunc("/api/algorithms/{algorithmId}", getAlgorithmHandler).Methods("GET")
+	return r
 }

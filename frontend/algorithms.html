@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithms</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1 id="subtopic-title"></h1>
+    <form id="add-algorithm-form">
+        <input type="text" id="algorithm-name" placeholder="Algorithm Name" required>
+        <textarea id="algorithm-description" placeholder="Description"></textarea>
+        <input type="file" id="algorithm-code" accept=".txt,.js,.py,.java,.cpp,.c" required>
+        <button type="submit">Add Algorithm</button>
+    </form>
+    <div id="algorithms-container"></div>
+    <script src="algorithms.js"></script>
+</body>
+</html>
