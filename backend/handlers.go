@@ -130,46 +130,73 @@ func addCardHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getSubtopicsHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+    w.Header().Set("Content-Type", "application/json")
 
-	var subtopics []Subtopic
-	cursor, err := subtopicsCollection.Find(context.TODO(), bson.D{})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	defer cursor.Close(context.TODO())
+    // Get the topicId from the URL parameters
+    vars := mux.Vars(r)
+    topicID := vars["topicId"]
 
-	for cursor.Next(context.TODO()) {
-		var subtopic Subtopic
-		cursor.Decode(&subtopic)
-		subtopics = append(subtopics, subtopic)
-	}
+    // Convert topicID to ObjectID
+    topicObjectID, err := primitive.ObjectIDFromHex(topicID)
+    if err != nil {
+        http.Error(w, "Invalid topicId", http.StatusBadRequest)
+        return
+    }
 
-	if err := cursor.Err(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+    // Find subtopics related to the topic
+    var subtopics []Subtopic
+    cursor, err := subtopicsCollection.Find(context.TODO(), bson.M{"topicId": topicObjectID})
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    defer cursor.Close(context.TODO())
 
-	json.NewEncoder(w).Encode(subtopics)
+    for cursor.Next(context.TODO()) {
+        var subtopic Subtopic
+        cursor.Decode(&subtopic)
+        subtopics = append(subtopics, subtopic)
+    }
+
+    if err := cursor.Err(); err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    json.NewEncoder(w).Encode(subtopics)
 }
 
 func addSubtopicHandler(w http.ResponseWriter, r *http.Request) {
-	var newSubtopic Subtopic
-	json.NewDecoder(r.Body).Decode(&newSubtopic)
+    w.Header().Set("Content-Type", "application/json")
 
-	result, err := subtopicsCollection.InsertOne(context.TODO(), newSubtopic)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+    var newSubtopic Subtopic
+    err := json.NewDecoder(r.Body).Decode(&newSubtopic)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
 
-	// Set the ID of the new subtopic
-	newSubtopic.ID = result.InsertedID.(primitive.ObjectID)
+    // Convert topicId to ObjectID
+    topicObjectID, err := primitive.ObjectIDFromHex(newSubtopic.TopicID.Hex())
+    if err != nil {
+        http.Error(w, "Invalid topicId", http.StatusBadRequest)
+        return
+    }
+    newSubtopic.TopicID = topicObjectID
 
-	// Return the updated list of subtopics
-	getSubtopicsHandler(w, r)
+    result, err := subtopicsCollection.InsertOne(context.TODO(), newSubtopic)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    // Set the ID of the new subtopic
+    newSubtopic.ID = result.InsertedID.(primitive.ObjectID)
+
+    // Return the newly created subtopic
+    json.NewEncoder(w).Encode(newSubtopic)
 }
+
 
 func getAlgorithmsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")

@@ -8,7 +8,7 @@ func setupRoutes() *mux.Router {
     r := mux.NewRouter()
     r.HandleFunc("/api/cards", getCardsHandler).Methods("GET")
     r.HandleFunc("/api/cards/add", addCardHandler).Methods("POST")
-    r.HandleFunc("/api/subtopics", getSubtopicsHandler).Methods("GET")
+    r.HandleFunc("/api/subtopics/{topicId}", getSubtopicsHandler).Methods("GET") // Updated route
     r.HandleFunc("/api/subtopics/add", addSubtopicHandler).Methods("POST")
     r.HandleFunc("/api/algorithms", getAlgorithmsHandler).Methods("GET")
     r.HandleFunc("/api/algorithms/add", uploadAlgorithmHandler).Methods("POST")
