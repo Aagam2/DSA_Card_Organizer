@@ -2,20 +2,14 @@ body {
     font-family: Arial, sans-serif;
 }
 
-#app {
-    max-width: 600px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-#cardsContainer, #subtopics-container, #algorithms-container {
+#algorithms-container {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     justify-content: center;
 }
 
-.card, .subtopic, .algorithm {
+.algorithm {
     border: 1px solid #ccc;
     padding: 10px;
     width: 150px;
@@ -51,13 +45,4 @@ form button {
 
 form button:hover {
     background-color: #0056b3;
-}
-
-pre {
-    background-color: #f9f9f9;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 5px;
-    white-space: pre-wrap;
-    word-wrap: break-word;
 }

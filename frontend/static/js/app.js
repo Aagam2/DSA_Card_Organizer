@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     cardElement.className = "card";
                     cardElement.innerHTML = `
                         <h3>${card.name}</h3>
-                        <p>ID: ${card.id}</p>
                     `;
                     cardElement.addEventListener("click", () => {
                         window.location.href = `subtopics.html?topicId=${card.id}&topicName=${card.name}`;
