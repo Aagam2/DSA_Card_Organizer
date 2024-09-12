@@ -39,11 +39,17 @@ type Algorithm struct {
 	Code        string             `json:"code"`
 }
 
+type Note struct {
+    AlgorithmID primitive.ObjectID `json:"algorithmId" bson:"algorithmId"`
+    Notes       string             `json:"notes"`
+}
+
 var (
 	cardsCollection      *mongo.Collection
 	subtopicsCollection  *mongo.Collection
 	algorithmsCollection *mongo.Collection
 	client               *mongo.Client
+	notesCollection *mongo.Collection
 )
 
 func init() {
@@ -78,6 +84,7 @@ func init() {
 	cardsCollection = client.Database("DSA_Cards").Collection("Topics")
 	subtopicsCollection = client.Database("DSA_Cards").Collection("Subtopics")
 	algorithmsCollection = client.Database("DSA_Cards").Collection("Algorithms")
+	notesCollection = client.Database("DSA_Cards").Collection("Notes")
 }
 
 func getCardsHandler(w http.ResponseWriter, r *http.Request) {
@@ -341,4 +348,65 @@ func getAlgorithmHandler(w http.ResponseWriter, r *http.Request) {
 	algorithm.Code = buf.String()
 
 	json.NewEncoder(w).Encode(algorithm)
+}
+
+func getNotesHandler(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "application/json")
+
+    vars := mux.Vars(r)
+    algorithmID := vars["algorithmId"]
+
+    algorithmObjectID, err := primitive.ObjectIDFromHex(algorithmID)
+    if err != nil {
+        http.Error(w, "Invalid algorithmId", http.StatusBadRequest)
+        return
+    }
+
+    var note Note
+    err = notesCollection.FindOne(context.TODO(), bson.M{"algorithmId": algorithmObjectID}).Decode(&note)
+    if err != nil {
+        if err == mongo.ErrNoDocuments {
+            json.NewEncoder(w).Encode(Note{AlgorithmID: algorithmObjectID, Notes: ""})
+            return
+        }
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    json.NewEncoder(w).Encode(note)
+}
+
+func saveNotesHandler(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "application/json")
+
+    vars := mux.Vars(r)
+    algorithmID := vars["algorithmId"]
+
+    algorithmObjectID, err := primitive.ObjectIDFromHex(algorithmID)
+    if err != nil {
+        http.Error(w, "Invalid algorithmId", http.StatusBadRequest)
+        return
+    }
+
+    var note Note
+    err = json.NewDecoder(r.Body).Decode(&note)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+
+    note.AlgorithmID = algorithmObjectID
+
+    _, err = notesCollection.UpdateOne(
+        context.TODO(),
+        bson.M{"algorithmId": algorithmObjectID},
+        bson.M{"$set": note},
+        options.Update().SetUpsert(true),
+    )
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    json.NewEncoder(w).Encode(note)
 }
