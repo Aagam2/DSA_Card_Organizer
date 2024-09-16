@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         <p>${algorithm.description}</p>
                     `;
                     algorithmElement.addEventListener("click", function() {
+                        updateNavigation({ algorithmId: algorithm.id, algorithmName: algorithm.name });
                         window.location.href = `algorithm.html?algorithmId=${algorithm.id}&algorithmName=${algorithm.name}`;
                     });
                     algorithmsContainer.appendChild(algorithmElement);

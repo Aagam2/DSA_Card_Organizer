@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <p>${subtopic.description}</p>
                 `;
                 subtopicElement.addEventListener("click", function() {
+                    updateNavigation({ subtopicId: subtopic.id, subtopicName: subtopic.name });
                     window.location.href = `algorithms.html?subtopicId=${subtopic.id}&subtopicName=${subtopic.name}`;
                 });
                 subtopicsContainer.appendChild(subtopicElement);

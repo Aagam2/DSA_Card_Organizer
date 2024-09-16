@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         <h3>${card.name}</h3>
                     `;
                     cardElement.addEventListener("click", () => {
+                        updateNavigation({ topicId: card.id, topicName: card.name });
                         window.location.href = `subtopics.html?topicId=${card.id}&topicName=${card.name}`;
                     });
                     cardsContainer.appendChild(cardElement);
